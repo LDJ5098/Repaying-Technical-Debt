@@ -1,6 +1,7 @@
 # 🚀 IoT Legacy Renewal: Security & Communication
 
 기존 PHP 기반 IoT 시스템의 보안 취약점을 분석하고, MQTT와 Node.js를 활용하여 보안이 강화된 양방향 통신 시스템으로 현대화합니다.
+Notion : https://www.notion.so/267853f47a35805d846de6e32330b352?source=copy_link
 
 ## 1. 🔍 Legacy 문제점
 - DB 접속 정보 평문 노출 및 SQL Injection 위험.
