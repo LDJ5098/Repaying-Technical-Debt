@@ -1,6 +1,9 @@
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
+
+# Prisma 실행에 필요한 OpenSSL 설치
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # 라이브러리 목록 먼저 복사 후 설치 (소스코드 변경 시 재설치 방지)
 COPY package*.json ./
