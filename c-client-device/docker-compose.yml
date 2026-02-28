@@ -9,3 +9,4 @@ services:
       # 내 컴퓨터의 현재 폴더(.)를 도커 안의 /app 폴더와 동기화
       - .:/app
     tty: true  # 컨테이너 전원이 꺼지지 않고 계속 켜져 있도록 유지
+    stdin_open: true

@@ -1,0 +1,5 @@
+services:
+  hacker-pc:
+    image: alpine:latest
+    network_mode: host
+    command: sh -c "apk add tcpdump && tcpdump -i any -A port 5098"

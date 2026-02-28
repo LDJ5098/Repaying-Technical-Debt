@@ -8,5 +8,5 @@ RUN apk update && \
 # 3. 작업 폴더 설정
 WORKDIR /app
 
-# 4. 컨테이너가 바로 꺼지지 않게 대기
-CMD ["/bin/sh"]
+# 4. 컨테이너 시작 시 컴파일 후 실행
+CMD sh -c "gcc /app/device.c -o /app/app -lpaho-mqtt3c && /app/app"
