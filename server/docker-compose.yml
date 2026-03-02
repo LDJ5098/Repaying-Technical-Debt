@@ -4,16 +4,16 @@ services:
     image: eclipse-mosquitto:latest
     container_name: mqtt-broker
     ports:
-      # OS역할로 compose이기 때문에 외부, 내부망 포트 번호를 전부 환경변수처리
-      - "${MQTT_EXT_PORT}:${MQTT_INT_PORT}"
+      # - "${MQTT_EXT_PORT}:${MQTT_INT_PORT}"        # 평문 포트 (테스트 완료)
+      - "${MQTT_TLS_EXT_PORT}:${MQTT_TLS_INT_PORT}"  # TLS 포트
     volumes:
-      # 설정 파일 매핑 (읽기 전용: ro)
       - ./mosquitto/docker-entrypoint.sh:/docker-entrypoint.sh:ro
-      # 로그 파일을 내 컴퓨터의 볼륨으로 빼내기
       - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/certs:/mosquitto/certs:ro          # 인증서 마운트 추가
     command: sh /docker-entrypoint.sh
     environment:
-      MQTT_INT_PORT: ${MQTT_INT_PORT}
+      #MQTT_INT_PORT: ${MQTT_INT_PORT}                # 평문 포트 (테스트 완료)
+      MQTT_TLS_INT_PORT: ${MQTT_TLS_INT_PORT}         # TLS 포트
     networks:
       - compose-net
 

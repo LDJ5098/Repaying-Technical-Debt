@@ -22,8 +22,15 @@ int main() {
     char hostname[100];
     gethostname(hostname, 100);
 
-    MQTTClient_create(&client, "tcp://host.docker.internal:5098", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    //MQTTClient_create(&client, "tcp://host.docker.internal:5098", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); //평문 (테스트완료)
+    MQTTClient_create(&client, "ssl://host.docker.internal:9883", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); // TLS 연결
     MQTTClient_connectOptions opts = MQTTClient_connectOptions_initializer;
+
+    //TLS 옵션
+    MQTTClient_SSLOptions ssl_opts = MQTTClient_SSLOptions_initializer;
+    ssl_opts.trustStore = "/certs/ca.crt";
+    ssl_opts.verify = 1;
+    opts.ssl = &ssl_opts;
 
     // 응답 콜백 등록
     MQTTClient_setCallbacks(client, NULL, NULL, messageArrived, NULL);

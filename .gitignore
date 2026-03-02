@@ -3,6 +3,7 @@
 
 # 인증서 파일 (보안상 Git에 올리면 안됨)
 server/mosquitto/certs/*
+c-client-device/certs/*
 
 # generate-certs.sh 는 제외 (스크립트)
 !server/mosquitto/certs/generate-certs.sh
