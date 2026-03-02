@@ -12,4 +12,4 @@ COPY ./certs/ca.crt /certs/ca.crt
 WORKDIR /app
 
 # 4. 컨테이너 시작 시 컴파일 후 실행
-CMD sh -c "gcc /app/device.c -o /app/app -lpaho-mqtt3c && /app/app"
+CMD sh -c "gcc /app/device.c -o /app/app -lpaho-mqtt3cs && /app/app"

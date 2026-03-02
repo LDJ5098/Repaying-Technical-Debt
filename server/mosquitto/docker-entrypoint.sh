@@ -1,8 +1,8 @@
 #!/bin/sh
 cat > /tmp/mosquitto-runtime.conf << EOF
-# 평문 포트 (테스트 완료, 비활성화)
-# listener ${MQTT_INT_PORT} 0.0.0.0
-# allow_anonymous true
+# 평문 포트 (내부망 backend 전용, 외부 노출 X)
+listener ${MQTT_INT_PORT} 0.0.0.0
+allow_anonymous true
 
 # TLS 포트
 listener ${MQTT_TLS_INT_PORT} 0.0.0.0

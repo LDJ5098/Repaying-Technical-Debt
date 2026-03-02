@@ -22,15 +22,19 @@ int main() {
     char hostname[100];
     gethostname(hostname, 100);
 
+    printf("[*] 디바이스 ID: %s\n", hostname);
+
     //MQTTClient_create(&client, "tcp://host.docker.internal:5098", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); //평문 (테스트완료)
     MQTTClient_create(&client, "ssl://host.docker.internal:9883", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); // TLS 연결
     MQTTClient_connectOptions opts = MQTTClient_connectOptions_initializer;
 
-    //TLS 옵션
+    // TLS 옵션
+    printf("[*] CA 인증서 로드 중: /certs/ca.crt\n");
     MQTTClient_SSLOptions ssl_opts = MQTTClient_SSLOptions_initializer;
     ssl_opts.trustStore = "/certs/ca.crt";
     ssl_opts.verify = 1;
     opts.ssl = &ssl_opts;
+    printf("[*] TLS 옵션 설정 완료\n");
 
     // 응답 콜백 등록
     MQTTClient_setCallbacks(client, NULL, NULL, messageArrived, NULL);
@@ -39,21 +43,23 @@ int main() {
     int rc;
     int max_retry = 5;
     int attempt = 1;
+    printf("[*] 브로커 연결 시도: ssl://host.docker.internal:9883\n");
     while ((rc = MQTTClient_connect(client, &opts)) != 0 && attempt <= max_retry) {
-        printf("브로커 연결 실패 (%d/%d), 3초 후 재시도...\n", attempt, max_retry);
+        printf("[!] 브로커 연결 실패 (%d/%d) → 에러 코드: %d, 3초 후 재시도...\n", attempt, max_retry, rc);
         sleep(3);
         attempt++;
     }
 
     if (rc != 0) {
-        printf("브로커 연결 최종 실패! (%d번 시도, 에러 코드: %d)\n", max_retry, rc);
+        printf("[!] 브로커 연결 최종 실패! (%d번 시도, 에러 코드: %d)\n", max_retry, rc);
         return -1;
     }
 
-    printf("브로커 연결 성공! (%d번째 시도)\n", attempt);
+    printf("[+] 브로커 연결 성공! (%d번째 시도)\n", attempt);
 
     // 응답 토픽 구독
     MQTTClient_subscribe(client, "device/response", 0);
+    printf("[+] 토픽 구독 완료: device/response\n");
 
     while(1) {
         char input[20];
@@ -82,14 +88,14 @@ int main() {
                 timeout--;
             }
             if (!response_received) {
-                printf("서버 응답 없음 (타임아웃)\n");
+                printf("[!] 서버 응답 없음 (타임아웃)\n");
             }
 
         } else if (strcmp(input, "break") == 0) {
             printf("종료합니다.\n");
             break;
         } else {
-            printf("알 수 없는 명령어: %s\n", input);
+            printf("[!] 알 수 없는 명령어: %s\n", input);
         }
     }
     return 0;
