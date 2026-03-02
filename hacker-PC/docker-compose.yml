@@ -1,8 +1,37 @@
 services:
-  hacker-pc:
+  # ------------------------------------------------------------
+  # 01. 포트 스캐너
+  # 역할: 호스트의 열린 포트 탐색 및 서비스 식별
+  # 도구: nmap
+  # 실행: docker exec -it hacker-port-scanner sh /attack.sh
+  # ------------------------------------------------------------
+  port-scanner:
     image: alpine:latest
-    container_name: hacker-pc
+    container_name: hacker-port-scanner
     network_mode: host
+    command: >
+      sh -c "apk add --no-cache nmap nmap-scripts &&
+             echo '[*] port-scanner ready' &&
+             tail -f /dev/null"
     tty: true
     stdin_open: true
-    command: sh -c "apk add --no-cache nmap tcpdump && /bin/sh"
+
+  # ------------------------------------------------------------
+  # 02. MQTT 스니퍼 (TShark 버전)
+  # 역할: 호스트 네트워크에서 5098 포트 MQTT 프로토콜 분석 및 데이터 탈취
+  # 도구: wireshark(tshark), mosquitto-clients
+  # 실행: docker exec -it hacker-mqtt-sniffer sh /attack.sh
+  # ------------------------------------------------------------
+  mqtt-sniffer:
+    image: alpine:latest
+    container_name: hacker-mqtt-sniffer
+    network_mode: host
+    command: >
+      sh -c "apk add --no-cache tshark &&
+             echo '[*] TShark (MQTT Sniffer) ready' &&
+             tail -f /dev/null"
+    tty: true
+    stdin_open: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW

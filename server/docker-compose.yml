@@ -21,9 +21,13 @@ services:
   database:
     image: mariadb:latest
     container_name: database
+    command: --port=${DB_PORT}
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MARIADB_DATABASE: ${DB_NAME}
+      #DB관리용 계정 추가
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_USER_PASSWORD}
       TZ: Asia/Seoul
     volumes:
       # DB 실제 데이터를 server/mariadb 폴더에 영구 보존
