@@ -8,7 +8,8 @@ services:
   port-scanner:
     image: alpine:latest
     container_name: hacker-port-scanner
-    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: >
       sh -c "apk add --no-cache nmap nmap-scripts &&
              echo '[*] port-scanner ready' &&
@@ -18,7 +19,7 @@ services:
 
   # ------------------------------------------------------------
   # 02. MQTT 스니퍼 (TShark 버전)
-  # 역할: 호스트 네트워크에서 5098 포트 MQTT 프로토콜 분석 및 데이터 탈취
+  # 역할: 5098 포트 MQTT 프로토콜 분석 및 데이터 탈취
   # 도구: wireshark(tshark), mosquitto-clients
   # 실행: docker exec -it hacker-mqtt-sniffer sh /attack.sh
   # ------------------------------------------------------------
@@ -35,3 +36,24 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
+
+  # ------------------------------------------------------------
+  # 03. MQTT 외부 구독자
+  # 역할: TLS 환경에서 인증 없이 브로커 접속 후 전체 토픽 구독
+  # 도구: mosquitto-clients
+  # 결과: docker logs -f hacker-mqtt-subscriber
+  # ------------------------------------------------------------
+  mqtt-subscriber:
+    image: python:3.10-slim
+    container_name: hacker-mqtt-subscriber
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # 현재 위치(hacker-PC)의 하위 폴더인 03-mqtt-subscriber를 컨테이너의 /app에 연결
+      - ./03-mqtt-subscriber:/app
+    working_dir: /app
+    command: >
+      sh -c "pip install paho-mqtt &&
+             python3 attack.py"
+    tty: true
+    stdin_open: true
