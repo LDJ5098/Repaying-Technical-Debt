@@ -28,10 +28,12 @@ int main() {
     MQTTClient_create(&client, "ssl://host.docker.internal:9883", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); // TLS 연결
     MQTTClient_connectOptions opts = MQTTClient_connectOptions_initializer;
 
-    // TLS 옵션
+    // mTLS 옵션
     printf("[*] CA 인증서 로드 중: /certs/ca.crt\n");
     MQTTClient_SSLOptions ssl_opts = MQTTClient_SSLOptions_initializer;
     ssl_opts.trustStore = "/certs/ca.crt";
+    ssl_opts.keyStore = "/certs/client.crt";    // 클라이언트 인증서 추가
+    ssl_opts.privateKey = "/certs/client.key";  // 클라이언트 개인키 추가
     ssl_opts.verify = 1;
     opts.ssl = &ssl_opts;
     printf("[*] TLS 옵션 설정 완료\n");
