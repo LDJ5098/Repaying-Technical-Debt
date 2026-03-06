@@ -57,6 +57,26 @@ services:
     networks:
       - compose-net
 
+  # 4. SSH
+  ssh:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: ssh
+    environment:
+      - USER_NAME=${SSH_USER}
+      - PUBLIC_KEY_FILE=/pubkey/1-LEVEL-KEY.pub
+
+      - SUDO_ACCESS=false
+    ports:
+      - "${SSH_EXT_PORT}:2222"
+    volumes:
+      - ./ssh-key/1-LEVEL-KEY.pub:/pubkey/1-LEVEL-KEY.pub:ro
+
+      #SSH로 관리할 대상 컨테이너(폴더)
+      - ./mosquitto:/mosquitto
+      - ./backend:/backend
+    networks:
+      - compose-net
+
 networks:
   compose-net:
     driver: bridge
