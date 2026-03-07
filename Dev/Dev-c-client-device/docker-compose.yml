@@ -1,8 +1,8 @@
 services:
   c-client:
     environment:
-      - MQTT_PORT=9883
-    container_name: Dev-C-client
+      - MQTT_PORT=${MQTT_PORT}
+    container_name: ${TAG}-C-client
     build: .
     # 단말기가 요새(Mosquitto)를 찾아갈 수 있는 가상 다리 연결
     extra_hosts:
