@@ -36,7 +36,3 @@ services:
       - ./runner:/runner                        # runner 폴더 마운트
     networks:
       - compose-net
-
-networks:
-  compose-net:
-    external: true
