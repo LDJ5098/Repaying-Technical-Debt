@@ -8,6 +8,8 @@ on:
       - 'Dev/Dev-c-client-device/device.c'
       - 'Dev/Dev-c-client-device/Dockerfile'
       - 'Dev/Dev-server/mosquitto/docker-entrypoint.sh'
+      - 'Dev/Dev-c-client-device/docker-compose.yml'
+      - 'Dev/Dev-server/docker-compose.yml'
 
 jobs:
   sync:
@@ -21,6 +23,8 @@ jobs:
           cp Dev/Dev-c-client-device/device.c                     infra/Infra-c-client-device/device.c
           cp Dev/Dev-c-client-device/Dockerfile                    infra/Infra-c-client-device/Dockerfile
           cp Dev/Dev-server/mosquitto/docker-entrypoint.sh         infra/Infra-server/mosquitto/docker-entrypoint.sh
+          cp Dev/Dev-c-client-device/docker-compose.yml            infra/Infra-c-client-device/docker-compose.yml
+          cp Dev/Dev-server/docker-compose.yml                     infra/Infra-server/docker-compose.yml
 
       - name: 변경사항 커밋 및 푸시
         run: |

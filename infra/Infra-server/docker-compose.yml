@@ -77,7 +77,24 @@ services:
       - ./backend:/backend:ro
     networks:
       - compose-net
-
+  
+  # 5. GitHub Actions Runner (B-Prod)
+  runner:
+    image: ghcr.io/actions/actions-runner:latest
+    container_name: ${TAG}-runner
+    entrypoint: /runner/entrypoint.sh          # 커스텀 스크립트 주입
+    environment:
+      - REPO_URL=https://github.com/LDJ5098/IoT-Security-Architecture-Configure
+      - RUNNER_NAME=${TAG}-runner
+      - ACCESS_TOKEN=${RUNNER_PAT}             # PAT으로 Runner Token 자동 발급
+      - RUNNER_WORKDIR=/tmp/runner
+      - LABELS=infra-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./runner:/runner                        # runner 폴더 마운트
+    networks:
+      - compose-net
+      
 networks:
   compose-net:
     driver: bridge
