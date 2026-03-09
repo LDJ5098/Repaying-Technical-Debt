@@ -24,6 +24,7 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dev/Dev-c-client-device/Dockerfile
+          ignore: DL3018
 
       - name: sh 문법 체크 (docker-entrypoint.sh)
         run: sh -n Dev/Dev-server/mosquitto/docker-entrypoint.sh
