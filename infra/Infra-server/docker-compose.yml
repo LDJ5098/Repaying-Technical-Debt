@@ -15,7 +15,7 @@ services:
       MQTT_INT_PORT: ${MQTT_INT_PORT}                # 평문 포트 (테스트 완료)
       MQTT_TLS_INT_PORT: ${MQTT_TLS_INT_PORT}         # TLS 포트
     networks:
-      - compose-net
+      - service-net
 
   # 2. 데이터베이스 (금고)
   database:
@@ -40,7 +40,7 @@ services:
       timeout: 3s    # 3초 안에 응답 없으면 실패
       retries: 5     # 5번 실패하면 unhealthy 판정
     networks:
-      - compose-net
+      - service-net
 
   # 3. 백엔드 서버
   backend:
@@ -55,8 +55,8 @@ services:
       database:
         condition: service_healthy   # database는 healthy 상태일 때
     networks:
-      - compose-net
+      - service-net
       
 networks:
-  compose-net:
+  service-net:
     driver: bridge

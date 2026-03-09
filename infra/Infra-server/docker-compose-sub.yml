@@ -1,38 +1,45 @@
 services:
-  # 1. SSH
+  # 1. SSH (Bastion Host)
   ssh:
     image: lscr.io/linuxserver/openssh-server:latest
     container_name: ${TAG}-ssh
     environment:
       - USER_NAME=${SSH_USER}
       - PUBLIC_KEY_FILE=/pubkey/1-LEVEL-KEY.pub
-
       - SUDO_ACCESS=false
     ports:
       - "${SSH_EXT_PORT}:2222"
     volumes:
       - ./ssh-key/1-LEVEL-KEY.pub:/pubkey/1-LEVEL-KEY.pub:ro
-
-      #SSH로 관리할 대상 컨테이너(폴더) #certs 제외
       - ./mosquitto/docker-entrypoint.sh:/mosquitto/docker-entrypoint.sh:ro
-      - ./mosquitto/log:/mosquitto/log:ro                                   
+      - ./mosquitto/log:/mosquitto/log:ro
       - ./backend:/backend:ro
+      - /var/run/docker.sock:/var/run/docker.sock  # 컨테이너 제어용
     networks:
-      - compose-net
-  
-  # 2. GitHub Actions Runner (B-Prod)
-  runner:
-    image: ghcr.io/actions/actions-runner:latest
-    container_name: ${TAG}-runner
-    entrypoint: /runner/runner-entrypoint.sh          # 커스텀 스크립트 주입
-    environment:
-      - REPO_URL=https://github.com/LDJ5098/IoT-Security-Architecture-Configure
-      - RUNNER_NAME=${TAG}-runner
-      - ACCESS_TOKEN=${RUNNER_PAT}             # PAT으로 Runner Token 자동 발급
-      - RUNNER_WORKDIR=/tmp/runner
-      - LABELS=server-runner
+      - service-net   # 서비스 서버 접근
+      - mgmt-net     # 인프라 서버 접근
+
+  # 2. CD Server
+  cd-server:
+    build: ./CD-server
+    container_name: ${TAG}-cd-server
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./runner:/runner                        # runner 폴더 마운트
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker 제어용
+      - ./:/infra-server                            # docker-compose.yml 접근
     networks:
-      - compose-net
+      - service-net   # 서비스 서버 배포용
+      - mgmt-net     # Discord Bot과 통신
+
+  # 3. Discord Bot
+  discord-bot:
+    build: ./discord-bot
+    container_name: ${TAG}-discord-bot
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - CD_SERVER_URL=http://${TAG}-cd-server:3000
+    networks:
+      - mgmt-net     # CD Server와 통신만 가능
+
+networks:
+  mgmt-net:
+    driver: bridge
