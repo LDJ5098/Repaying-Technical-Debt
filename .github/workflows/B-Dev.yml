@@ -1,4 +1,4 @@
-name: B-Dev (파일 동기화)
+name: B-Dev (Dev 배포 알림)
 
 on:
   push:
@@ -12,24 +12,47 @@ on:
       - 'Dev/Dev-server/docker-compose.yml'
 
 jobs:
-  sync:
-    runs-on: client-runner
+  ci:
+    runs-on: ubuntu-latest
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
 
-      - name: 파일 동기화
-        run: |
-          cp Dev/Dev-c-client-device/device.c                     infra/Infra-c-client-device/device.c
-          cp Dev/Dev-c-client-device/Dockerfile                    infra/Infra-c-client-device/Dockerfile
-          cp Dev/Dev-server/mosquitto/docker-entrypoint.sh         infra/Infra-server/mosquitto/docker-entrypoint.sh
-          cp Dev/Dev-c-client-device/docker-compose.yml            infra/Infra-c-client-device/docker-compose.yml
-          cp Dev/Dev-server/docker-compose.yml                     infra/Infra-server/docker-compose.yml
+      - name: C 컴파일 체크 (device.c)
+        run: gcc -fsyntax-only Dev/Dev-c-client-device/device.c
 
-      - name: 변경사항 커밋 및 푸시
+      - name: Dockerfile 문법 체크 (c-client-device)
+        run: docker build --no-cache --dry-run -f Dev/Dev-c-client-device/Dockerfile Dev/Dev-c-client-device
+
+      - name: sh 문법 체크 (docker-entrypoint.sh)
+        run: sh -n Dev/Dev-server/mosquitto/docker-entrypoint.sh
+
+      - name: docker-compose 문법 체크
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add infra/
-          git diff --staged --quiet || git commit -m "[B-Dev] Dev → Infra 파일 동기화"
-          git push
+          docker compose -f Dev/Dev-c-client-device/docker-compose.yml config
+          docker compose -f Dev/Dev-server/docker-compose.yml config
+
+  notify:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord 승인 요청 전송
+        run: |
+          curl -X POST https://discord.com/api/channels/${{ secrets.CHANNEL_ID }}/messages \
+            -H "Authorization: Bot ${{ secrets.DISCORD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "[Dev] ${{ github.event.head_commit.message }}",
+                "url": "${{ github.event.head_commit.url }}",
+                "description": "**푸시한 사람:** ${{ github.actor }}",
+                "color": 16776960
+              }],
+              "components": [{
+                "type": 1,
+                "components": [
+                  {"type": 2, "custom_id": "approve_dev", "label": "✅ 승인", "style": 3},
+                  {"type": 2, "custom_id": "reject_dev", "label": "❌ 거부", "style": 4}
+                ]
+              }]
+            }'

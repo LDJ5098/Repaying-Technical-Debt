@@ -1,4 +1,3 @@
-
 name: B-Prod (Backend 배포)
 
 on:
@@ -9,13 +8,44 @@ on:
       - 'Dev/Dev-server/backend/**'
 
 jobs:
-  deploy:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
 
-      - name: C 관리자 검증 대기
+      - name: Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: sh 문법 체크 (docker-entrypoint.sh)
+        run: sh -n Dev/Dev-server/backend/docker-entrypoint.sh
+
+      - name: Dockerfile 문법 체크
+        run: docker build --no-cache --dry-run -f Dev/Dev-server/backend/Dockerfile Dev/Dev-server/backend
+
+  notify:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord 승인 요청 전송
         run: |
-          echo "배포 요청 대기 중... (C 관리자 승인 필요)"
-          # 추후 Discord 웹훅 + 승인 로직 추가
+          curl -X POST https://discord.com/api/channels/${{ secrets.CHANNEL_ID }}/messages \
+            -H "Authorization: Bot ${{ secrets.DISCORD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "[Backend] ${{ github.event.head_commit.message }}",
+                "url": "${{ github.event.head_commit.url }}",
+                "description": "**푸시한 사람:** ${{ github.actor }}",
+                "color": 39423
+              }],
+              "components": [{
+                "type": 1,
+                "components": [
+                  {"type": 2, "custom_id": "approve_backend", "label": "✅ 승인", "style": 3},
+                  {"type": 2, "custom_id": "reject_backend", "label": "❌ 거부", "style": 4}
+                ]
+              }]
+            }'

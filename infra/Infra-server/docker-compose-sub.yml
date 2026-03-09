@@ -36,9 +36,13 @@ services:
     container_name: ${TAG}-discord-bot
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - CHANNEL_ID=${CHANNEL_ID}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
       - CD_SERVER_URL=http://${TAG}-cd-server:3000
+    ports:
+      - "${BOT_EXT_PORT}:3000"  # GitHub 웹훅 수신용
     networks:
-      - mgmt-net     # CD Server와 통신만 가능
+      - mgmt-net      # CD Server와 통신만 가능
 
 networks:
   mgmt-net:
