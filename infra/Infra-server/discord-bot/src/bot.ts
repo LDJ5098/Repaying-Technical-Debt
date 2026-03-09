@@ -30,7 +30,9 @@ const parseRunId = (description: string | null): string | null => {
 };
 
 client.on(Events.InteractionCreate, async (interaction) => {
+  console.log('인터랙션 수신:', interaction.type);  // 추가
   if (!interaction.isButton()) return;
+  console.log('버튼 클릭:', interaction.customId);  // 추가
 
   const { customId } = interaction;
   const message = interaction.message as Message;
