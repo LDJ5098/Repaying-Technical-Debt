@@ -48,6 +48,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}/backend
           tags: |
             type=sha,format=short
+            type=raw,value=latest  
 
       - name: Docker 이미지 빌드 및 GHCR push
         uses: docker/build-push-action@v5
