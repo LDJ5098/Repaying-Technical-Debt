@@ -1,4 +1,4 @@
-name: B-Prod (Backend 배포 알림)
+name: B-Prod (Backend 알림)
 
 on:
   push:
