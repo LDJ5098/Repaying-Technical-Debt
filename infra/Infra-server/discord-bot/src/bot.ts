@@ -19,7 +19,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, () => {
-  console.log(`Discord Bot 시작: ${client.user?.tag}`);
+  console.log(`Discord 시작: ${client.user?.tag}`);
 });
 
 // embed description에서 run_id 파싱
