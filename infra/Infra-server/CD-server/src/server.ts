@@ -17,7 +17,7 @@ const verifyRun = async (runId: string): Promise<string> => {
 
   while (true) {
     if (Date.now() - start > timeout) {
-      throw new Error('빌드 타임아웃 (3분 초과)');
+      throw new Error('빌드 타임아웃 (10분 초과)');
     }
 
     const res = await axios.get(
