@@ -28,6 +28,7 @@ services:
       - GITHUB_REPO=${GITHUB_REPO}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock  # Docker 제어용
+      - ~/.docker/config.json:/root/.docker/config.json # 호스트 로그인 정보 마운트
       - ./:/infra-server                            # docker-compose.yml 접근
     networks:
       - service-net   # 서비스 서버 배포용
