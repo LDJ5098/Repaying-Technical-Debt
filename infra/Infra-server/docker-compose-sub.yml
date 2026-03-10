@@ -26,7 +26,7 @@ services:
     environment:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_REPO=${GITHUB_REPO}
-      - DOCKER_CONTEXT=default
+    #  - DOCKER_CONTEXT=default
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock  # Docker 제어용
       - ~/.docker/config.json:/root/.docker/config.json
