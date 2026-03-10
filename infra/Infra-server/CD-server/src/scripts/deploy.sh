@@ -7,21 +7,21 @@ COMPOSE_FILE="/infra-server/docker-compose-infra.yml"
 COMPOSE_FILE_SUB="/infra-server/docker-compose-sub.yml"
 
 echo ">> 배포 시작 (Tag: ${IMAGE_TAG})"
+docker pull ${IMAGE}:${IMAGE_TAG}
 
-echo ">> 1. 이미지에서 최신 파일 추출 및 동기화 중..."
-docker run --rm \
-  -v "$(pwd)/backend:/target" \
-  ${IMAGE}:${IMAGE_TAG} \
-  cp -a /app/. /target/
+echo ">> 1. 이미지에서 최신 파일 추출 중..."
+TEMP_CONTAINER=$(docker create ${IMAGE}:${IMAGE_TAG})
 
-echo ">> 파일 동기화 완료!"
+docker cp ${TEMP_CONTAINER}:/app/. /infra-server/backend/
+docker rm ${TEMP_CONTAINER}
 
-# 2. 컨테이너 갱신
+echo ">> 로컬 폴더(OS) 최신화 완료!"
+
 echo ">> 2. 백엔드 컨테이너 갱신 중..."
+# 3. docker-compose.yml 파일에 이 변수를 넘겨서 실행시킵니다.
 export TAG_FOR_BACKEND="${IMAGE_TAG}"
 
-docker compose -f "${COMPOSE_FILE}" -f "${COMPOSE_FILE_SUB}" pull backend
-
+# --force-recreate와 --no-deps로 깔끔하게 백엔드만 교체!
 docker compose -f "${COMPOSE_FILE}" -f "${COMPOSE_FILE_SUB}" up -d --force-recreate --no-deps backend
 
 echo ">> 배포 완료"
