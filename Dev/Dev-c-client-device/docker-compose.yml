@@ -4,12 +4,9 @@ services:
       - MQTT_PORT=${MQTT_TLS_EXT_PORT}
     container_name: ${TAG}-C-client
     build: .
-    # 단말기가 요새(Mosquitto)를 찾아갈 수 있는 가상 다리 연결
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # 현재 폴더의 코드를 도커 안으로 실시간 연결
     volumes:
-      # 내 컴퓨터의 현재 폴더(.)를 도커 안의 /app 폴더와 동기화
       - .:/app
-    tty: true  # 컨테이너 전원이 꺼지지 않고 계속 켜져 있도록 유지
+    tty: true 
     stdin_open: true
