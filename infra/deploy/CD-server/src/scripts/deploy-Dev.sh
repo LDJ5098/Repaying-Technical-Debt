@@ -32,6 +32,6 @@ cd "$DEVICE_DIR"
 docker compose up -d --build
 # Mosquitto 서비스
 cd "$SERVER_DIR"
-docker compose -f infra-compose.yml up -d --no-deps mosquitto
+docker compose -f infra-compose.yml up -d --no-deps mqtt
 
 echo ">> [성공] Dev 배포가 완료되었습니다."
