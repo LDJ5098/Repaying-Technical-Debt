@@ -1,11 +1,8 @@
 #!/bin/sh
 set -e
 
-SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-REPO_ROOT=$(cd "$SCRIPT_DIR/../../../.." && pwd)
-
-DEVICE_DIR="$REPO_ROOT/Infra-c-client-device"
-SERVER_DIR="$REPO_ROOT/Infra-server"
+DEVICE_DIR="/Infra-c-client-device"
+SERVER_DIR="/Infra-server"
 
 # 필수 환경 변수 체크 (GITHUB_TOKEN, GITHUB_REPO가 필요함)
 if [ -z "$GITHUB_TOKEN" ] || [ -z "$GITHUB_REPO" ]; then
@@ -46,6 +43,6 @@ cd "$DEVICE_DIR"
 docker compose up -d --build
 # Mosquitto 서비스
 cd "$SERVER_DIR"
-docker compose -f "$SERVER_DIR/infra-compose.yml" up -d --no-deps mqtt
+docker compose -f infra-compose.yml up -d --no-deps mqtt
 
 echo ">> [성공] Dev 배포가 완료되었습니다."
