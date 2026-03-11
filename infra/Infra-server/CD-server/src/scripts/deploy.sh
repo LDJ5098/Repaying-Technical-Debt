@@ -18,9 +18,6 @@ docker rm ${TEMP_CONTAINER}
 echo ">> 로컬 폴더(OS) 최신화 완료!"
 
 echo ">> 2. 백엔드 컨테이너 갱신 중..."
-# 3. docker-compose.yml 파일에 이 변수를 넘겨서 실행시킵니다.
-export TAG_FOR_BACKEND="${IMAGE_TAG}"
-
 # --force-recreate와 --no-deps로 깔끔하게 백엔드만 교체!
 docker compose -f "${COMPOSE_FILE}" -f "${COMPOSE_FILE_SUB}" up -d --force-recreate --no-deps backend
 
