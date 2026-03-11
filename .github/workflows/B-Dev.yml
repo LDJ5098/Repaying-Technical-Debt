@@ -23,7 +23,7 @@ jobs:
               "embeds": [{
                 "title": "[Dev] ${{ github.event.head_commit.message }}",
                 "url": "${{ github.event.head_commit.url }}",
-                "description": "**Push User :** ${{ github.actor }}",
+                "description": "**Push User :** ${{ github.actor }}\n**Run ID:** ${{ github.run_id }}",
                 "color": 16776960
               }],
               "components": [{
