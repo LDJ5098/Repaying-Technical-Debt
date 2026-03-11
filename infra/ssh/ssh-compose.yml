@@ -5,15 +5,15 @@ services:
     container_name: ssh
     environment:
       - USER_NAME=${SSH_USER}
-      - PUBLIC_KEY_FILE=/pubkey/1-LEVEL-KEY.pub
+      - PUBLIC_KEY_FILE=/pubkey/A-KEY.pub
       - SUDO_ACCESS=false
     ports:
       - "${SSH_EXT_PORT}:2222"
     volumes:
-      - ./ssh-key/1-LEVEL-KEY.pub:/pubkey/1-LEVEL-KEY.pub:ro
-      - ././mosquitto/docker-entrypoint.sh:/mosquitto/docker-entrypoint.sh:ro
-      - ././mosquitto/log:/mosquitto/log:ro
-      - ././backend:/backend:ro
+      - ./ssh-key/A-KEY.pub:/pubkey/A-KEY.pub:ro
+      - ../Infra-server/mosquitto/docker-entrypoint.sh:/mosquitto/docker-entrypoint.sh:ro
+      - ../Infra-server/mosquitto/log:/mosquitto/log:ro
+      - ../Infra-server/backend:/backend:ro
       - /var/run/docker.sock:/var/run/docker.sock  # 컨테이너 제어용
     networks:
       - service-net   # 서비스 서버 접근
