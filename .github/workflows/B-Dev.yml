@@ -9,6 +9,7 @@ on:
       - 'Dev/Dev-c-client-device/Dockerfile'
       - 'Dev/Dev-server/mosquitto/docker-entrypoint.sh'
       - 'Dev/Dev-c-client-device/docker-compose.yml'
+      - 'Dev/Dev-server/mosquitto/Dockerfile'
 
 jobs:
   notify:

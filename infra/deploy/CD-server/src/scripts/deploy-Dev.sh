@@ -26,6 +26,10 @@ curl -s -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3
      -L "https://raw.githubusercontent.com/${REPO}/${BRANCH}/Dev/Dev-server/mosquitto/docker-entrypoint.sh" \
      -o "${INFRA_SERVER_DIR}/mosquitto/docker-entrypoint.sh"
 
+curl -s -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3.raw" \
+     -L "https://raw.githubusercontent.com/${REPO}/${BRANCH}/Dev/Dev-server/mosquitto/Dockerfile" \
+     -o "${INFRA_SERVER_DIR}/Dockerfile"
+
 # 권한 설정
 chmod +x "${INFRA_SERVER_DIR}/mosquitto/docker-entrypoint.sh"
 
