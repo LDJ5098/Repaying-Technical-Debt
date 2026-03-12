@@ -46,9 +46,9 @@ services:
   backend:
     image: ghcr.io/ldj5098/iot-security-architecture-configure/backend:${BACKEND_IMAGE_TAG:-latest}
     container_name: ${TAG}-backend
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+#    volumes:
+#      - ./backend:/app
+#      - /app/node_modules
     environment:
       MQTT_INT_PORT: ${MQTT_INT_PORT}
       DATABASE_URL: ${DATABASE_URL}

@@ -8,8 +8,8 @@ services:
       - GITHUB_REPO=${GITHUB_REPO}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock         # Docker 제어용
-      - ../Infra-server:/CD-Infra-server                  # Infra-server 접근
-      - ../Infra-c-client-device:/CD-Infra-c-client-device  # Infra-c-client-device 접근
+      - ../Infra-server:/Infra-server                  # Infra-server 접근
+      - ../Infra-c-client-device:/Infra-c-client-device  # Infra-c-client-device 접근
       #- ./CD-server:/app
     networks:
       - service-net   # 서비스 서버 배포용
