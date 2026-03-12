@@ -1,13 +1,10 @@
 #!/bin/sh
 set -e
 
-SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-REPO_ROOT=$(cd "$SCRIPT_DIR/../../../.." && pwd)
-
-IMAGE="ghcr.io/ldj5098/iot-security-architecture-configure/backend"
+IMAGE="ghcr.io/$GITHUB_REPO/backend"
 IMAGE_TAG="${1:-latest}"
-COMPOSE_FILE="$REPO_ROOT/Infra-server/infra-compose.yml" 
-BACKEND_DIR="$REPO_ROOT/Infra-server/backend"
+COMPOSE_FILE="/Infra-server/infra-compose.yml"
+BACKEND_DIR="/Infra-server/backend"
 
 echo ">> 배포 시작 (Tag: ${IMAGE_TAG})"
 docker pull ${IMAGE}:${IMAGE_TAG}
