@@ -18,6 +18,7 @@ docker rm ${TEMP_CONTAINER}
 echo ">> 로컬 폴더(Infra-server/backend) 최신화 완료!"
 
 echo ">> 2. 백엔드 컨테이너 갱신 중..."
+docker rm -f Infra-backend 2>/dev/null || true
 
 export BACKEND_IMAGE_TAG="${IMAGE_TAG}"
 
