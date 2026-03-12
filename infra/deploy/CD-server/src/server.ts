@@ -8,7 +8,7 @@ app.use(express.json());
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN!;
 const GITHUB_REPO = process.env.GITHUB_REPO!;
 const DEPLOY_BRANCH = 'main';
-const IMAGE_BASE = `ghcr.io/${GITHUB_REPO}/backend`;
+const IMAGE_BASE = `ghcr.io/${GITHUB_REPO.toLowerCase()}/backend`;
 
 // GitHub API로 run 검증
 const verifyRun = async (runId: string): Promise<string> => {
