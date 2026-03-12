@@ -13,5 +13,6 @@ RUN npm install
 COPY tsconfig.json .
 COPY src/ ./src/
 RUN npm run build
+RUN chmod +x /app/src/scripts/*.sh
 
 CMD ["npm", "start"]

@@ -1,51 +1,39 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-DEVICE_DIR="/Infra-c-client-device"
-SERVER_DIR="/Infra-server"
-COMPOSE_FILE="/Infra-server/infra-compose.yml"
+# 환경 변수는 CD 서버(Node.js) 프로세스에서 그대로 상속받습니다.
+TOKEN="${GITHUB_TOKEN}"
+REPO="${GITHUB_REPO}"
+BRANCH="main"
 
-# 필수 환경 변수 체크 (GITHUB_TOKEN, GITHUB_REPO가 필요함)
-if [ -z "$GITHUB_TOKEN" ] || [ -z "$GITHUB_REPO" ]; then
-    echo ">> Error : GITHUB_TOKEN 또는 GITHUB_REPO 환경 변수가 없습니다."
-    exit 1
-fi
+# deploy-compose.yml에 정의된 볼륨 마운트 경로
+INFRA_SERVER_DIR="/Infra-server"
+INFRA_CLIENT_DIR="/Infra-c-client-device"
 
-BASE_API="https://api.github.com/repos/$GITHUB_REPO/contents"
+echo ">> [Dev 배포] 인수 없이 내부 설정에 따라 파일 동기화 시작"
 
-AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
-ACCEPT_HEADER="Accept: application/vnd.github.v3.raw"
+echo ">> Client Device 관련 파일 다운로드 중..."
+curl -s -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3.raw" \
+     -L "https://raw.githubusercontent.com/${REPO}/${BRANCH}/Dev/Dev-c-client-device/device.c" \
+     -o "${INFRA_CLIENT_BASE}/device.c"
+curl -s -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3.raw" \
+     -L "https://raw.githubusercontent.com/${REPO}/${BRANCH}/Dev/Dev-c-client-device/Dockerfile" \
+     -o "${INFRA_CLIENT_BASE}/Dockerfile"
+curl -s -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3.raw" \
+     -L "https://raw.githubusercontent.com/${REPO}/${BRANCH}/Dev/Dev-c-client-device/docker-compose.yml" \
+     -o "${INFRA_CLIENT_BASE}/docker-compose.yml"
 
-echo ">> GitHub에서 최신 소스 코드 다운로드 시작..."
+# --- Mosquitto 관련 파일 동기화 ---
+echo ">> Mosquitto 관련 파일 다운로드 중..."
+curl -s -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3.raw" \
+     -L "https://raw.githubusercontent.com/${REPO}/${BRANCH}/Dev/Dev-server/mosquitto/docker-entrypoint.sh" \
+     -o "${INFRA_SERVER_BASE}/mosquitto/docker-entrypoint.sh"
 
-# Device 관련 파일
-echo ">> Device 파일 다운로드 중..."
-curl -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" -L \
-     "$BASE_API/Dev/Dev-c-client-device/device.c?ref=main" \
-     -o "$DEVICE_DIR/device.c"
+# 권한 설정
+chmod +x "${INFRA_SERVER_BASE}/mosquitto/docker-entrypoint.sh"
 
-curl -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" -L \
-     "$BASE_API/Dev/Dev-c-client-device/Dockerfile?ref=main" \
-     -o "$DEVICE_DIR/Dockerfile"
+echo ">> 인프라 서비스 재빌드 및 재시작..."
+cd "${INFRA_CLIENT_DIR}"
+docker compose up -d --build
 
-curl -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" -L \
-     "$BASE_API/Dev/Dev-c-client-device/docker-compose.yml?ref=main" \
-     -o "$DEVICE_DIR/docker-compose.yml"
-
-# Server(Mosquitto) 관련 파일
-echo ">> Server 파일 다운로드 중..."
-curl -H "$AUTH_HEADER" -H "$ACCEPT_HEADER" -L \
-     "$BASE_API/Dev/Dev-server/mosquitto/docker-entrypoint.sh?ref=main" \
-     -o "$SERVER_DIR/mosquitto/docker-entrypoint.sh"
-
-sed -i 's/\r$//' "$SERVER_DIR/mosquitto/docker-entrypoint.sh"
-chmod +x "$SERVER_DIR/mosquitto/docker-entrypoint.sh"
-
-echo ">> 다운로드 완료. 컨테이너 빌드 및 재시작..."
-
-# Mosquitto 서비스
-docker compose -f "${COMPOSE_FILE}" up -d --force-recreate --no-deps mqtt
-# Device 서비스
-docker compose -f "${DEVICE_DIR}/docker-compose.yml" up -d --build
-
-echo ">> [성공] Dev 배포가 완료되었습니다."
+echo ">> [Dev 배포] 완료"
