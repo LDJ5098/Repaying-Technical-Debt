@@ -1,2 +1,3 @@
 SSH_ACCESS: true
-TIME_LOCK: false
+TIME_LOCK: true
+WAIT_TIME: 180

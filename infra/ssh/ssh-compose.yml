@@ -18,6 +18,7 @@ services:
       - ../deploy:/deploy
       - /var/run/docker.sock:/var/run/docker.sock  # 컨테이너 제어용
       - ./deploy-setting:/deploy-setting #배포 설정 파일
+      - ./deploy-setting/ssh-login.sh:/custom-cont-init.d/ssh-login.sh
     networks:
       - service-net   # 메인 서버 접근
       - mgmt-net     # 배포 서버 접근
