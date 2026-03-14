@@ -167,10 +167,28 @@ class DeployQueue {
       if (job.status === 'timerlock_paused') this.resumeTimerlock(job);
       else if (job.status === 'waiting')     this.processNext();
     }
+
+    if (prev.timeLock && !next.timeLock) {
+      if (job.status === 'timerlock_running') {
+        clearTimeout(job.timer);
+        job.timer = undefined;
+        this.startDeploying(job);
+      } else if (job.status === 'timerlock_paused') {
+        job.status = 'waiting';
+        this.syncFileFromQueue();
+      }
+    }
+
+    if (!prev.timeLock && next.timeLock) {
+      if (job.status === 'waiting' && !next.sshAccess) {
+        this.startTimerlock(job);
+      }
+    }
+
     if (prev.waitTime !== next.waitTime) {
       if (job.status === 'timerlock_running') {
-        job.elapsed    += (Date.now() - job.timerStart!) / 1000;
-        job.timerStart  = Date.now();
+        job.elapsed += (Date.now() - job.timerStart!) / 1000;
+        job.timerStart = Date.now();
         clearTimeout(job.timer);
         const remaining = Math.max(0, next.waitTime - job.elapsed);
         sendCallback(job.callbackUrl, job.jobId, 'timerlock_update', { seconds: Math.ceil(remaining) });

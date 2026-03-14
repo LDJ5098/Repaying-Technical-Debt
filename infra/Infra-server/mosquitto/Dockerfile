@@ -5,4 +5,4 @@ RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
 
-#CI/CD test
+#CI/CD test 26.03.14 2309

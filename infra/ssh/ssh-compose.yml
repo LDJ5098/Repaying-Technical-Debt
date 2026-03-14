@@ -11,10 +11,10 @@ services:
       - "${SSH_EXT_PORT}:2222"
     volumes:
       - ./ssh-key/A-KEY.pub:/pubkey/A-KEY.pub:ro
-      - ../Infra-server/mosquitto/log:/mosquitto/log:ro
-      - ../Infra-server/mosquitto/docker-entrypoint.sh:/mosquitto/docker-entrypoint.sh
-      - ../Infra-server/mosquitto/Dockerfile:/mosquitto/Dockerfile
-      - ../Infra-server/backend:/backend
+      - ../infra-server/mosquitto/log:/mosquitto/log:ro
+      - ../infra-server/mosquitto/docker-entrypoint.sh:/mosquitto/docker-entrypoint.sh
+      - ../infra-server/mosquitto/Dockerfile:/mosquitto/Dockerfile
+      - ../infra-server/backend:/backend
       - ../deploy:/deploy
       - /var/run/docker.sock:/var/run/docker.sock  # 컨테이너 제어용
       - ./deploy-setting:/deploy-setting #배포 설정 파일

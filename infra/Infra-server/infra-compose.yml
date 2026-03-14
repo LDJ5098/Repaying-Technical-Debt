@@ -7,8 +7,8 @@ services:
       # - "${MQTT_EXT_PORT}:${MQTT_INT_PORT}"        # 평문 포트 (테스트 완료, 외부 접근 차단)
       - "${MQTT_TLS_EXT_PORT}:${MQTT_TLS_INT_PORT}"  # TLS 포트
     volumes:
-      - /d/작업/프로그램 개발/IoT-Security-Architecture-Configure/infra/Infra-server/mosquitto/log:/mosquitto/log
-      - /d/작업/프로그램 개발/IoT-Security-Architecture-Configure/infra/Infra-server/mosquitto/certs:/mosquitto/certs:ro
+      - /d/작업/프로그램 개발/IoT-Security-Architecture-Configure/infra/infra-server/mosquitto/log:/mosquitto/log
+      - /d/작업/프로그램 개발/IoT-Security-Architecture-Configure/infra/infra-server/mosquitto/certs:/mosquitto/certs:ro
       #- ./mosquitto/log:/mosquitto/log
       #- ./mosquitto/certs:/mosquitto/certs:ro          
     environment:
