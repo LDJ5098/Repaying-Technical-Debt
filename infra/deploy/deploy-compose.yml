@@ -10,6 +10,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock         # Docker 제어용
       - ../Infra-server:/Infra-server                  # Infra-server 접근
       - ../Infra-c-client-device:/Infra-c-client-device  # Infra-c-client-device 접근
+      - ../../../../ssh/deploy-setting/deploy_status.txt:/deploy-setting/deploy_status.txt
       #- ./CD-server:/app
     networks:
       - service-net   # 서비스 서버 배포용
