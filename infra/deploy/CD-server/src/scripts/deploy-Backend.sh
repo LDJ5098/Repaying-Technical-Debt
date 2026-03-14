@@ -3,8 +3,8 @@ set -e
 
 IMAGE="ghcr.io/$GITHUB_REPO/backend"
 IMAGE_TAG="${1:-latest}"
-COMPOSE_FILE="/Infra-server/infra-compose.yml"
-BACKEND_DIR="/Infra-server/backend/"
+COMPOSE_FILE="/infra-server/infra-compose.yml"
+BACKEND_DIR="/infra-server/backend/"
 
 echo ">> 배포 시작 (Tag: ${IMAGE_TAG})"
 docker pull ${IMAGE}:${IMAGE_TAG}
@@ -20,4 +20,4 @@ TEMP_CONTAINER=$(docker create ${IMAGE}:${IMAGE_TAG})
 docker cp ${TEMP_CONTAINER}:/app/. "${BACKEND_DIR}"
 docker rm ${TEMP_CONTAINER}
 
-echo ">> 로컬 폴더(Infra-server/backend) 최신화 완료!"
+echo ">> 로컬 폴더(infra-server/backend) 최신화 완료!"
