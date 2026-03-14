@@ -23,10 +23,10 @@ const BOT_CALLBACK_URL = process.env.BOT_CALLBACK_URL!;
 
 const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
 
-// 수락된 job의 interaction token 보관
-const pendingTokens   = new Map<string, string>();
+// 수락된 job의 정보 보관
+const pendingTokens  = new Map<string, { token: string; type: 'backend' | 'dev'; runId: string | null }>();
 // timerlock 카운트다운 타이머 보관
-const timelockTimers  = new Map<string, NodeJS.Timeout>();
+const timelockTimers = new Map<string, NodeJS.Timeout>();
 
 // ─── 헬퍼 ────────────────────────────────────────────────────────────────
 
@@ -109,7 +109,7 @@ const handleDeploy = async (
     if (data.status === 'blocked') {
       await updateInteraction(token, '🚫 관리자가 점검중입니다.', [retryRow(type, runId)]);
     } else {
-      pendingTokens.set(jobId, token);
+      pendingTokens.set(jobId, { token, type, runId });
       const msg = data.position === 0
         ? '🔄 배포를 준비 중입니다...'
         : `⏳ 배포 대기열에 진입했습니다. (대기: ${data.position})`;
@@ -161,11 +161,13 @@ app.post('/callback', async (req, res) => {
   console.log(`콜백 수신 (job_id: ${job_id}, event: ${event})`);
   res.json({ ok: true });
 
-  const token = pendingTokens.get(job_id);
-  if (!token) {
+  const pending = pendingTokens.get(job_id);
+  if (!pending) {
     console.warn(`토큰 없음 (job_id: ${job_id})`);
     return;
   }
+
+  const { token, type, runId } = pending;
 
   try {
     switch (event) {
@@ -186,13 +188,11 @@ app.post('/callback', async (req, res) => {
         break;
 
       case 'paused':
-        // 카운트다운 멈춤
         clearTimelockTimer(job_id);
         await updateInteraction(token, '⏸️ 배포가 일시정지 되었습니다.');
         break;
 
       case 'deploy_start':
-        // 혹시 남은 타이머 정리
         clearTimelockTimer(job_id);
         await updateInteraction(token, `🚀 ${data.label} 배포를 시작합니다...`);
         break;
@@ -202,7 +202,7 @@ app.post('/callback', async (req, res) => {
         break;
 
       case 'deploy_failed':
-        await updateInteraction(token, `❌ ${data.label} 배포 실패: ${data.error}`);
+        await updateInteraction(token, `❌ ${data.label} 배포 실패: ${data.error}`, [retryRow(type, runId)]);
         break;
 
       case 'job_deleted':
@@ -215,7 +215,7 @@ app.post('/callback', async (req, res) => {
   }
 
   if (TERMINAL_EVENTS.has(event)) {
-    clearTimelockTimer(job_id); // 혹시 남은 타이머 정리
+    clearTimelockTimer(job_id);
     pendingTokens.delete(job_id);
   }
 });
