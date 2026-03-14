@@ -22,8 +22,9 @@ services:
     container_name: discord-bot
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - CHANNEL_ID=${CHANNEL_ID}
-      - CD_SERVER_URL=http://cd-server:3000
+      - DISCORD_APP_ID=${DISCORD_APP_ID}
+      - CD_SERVER_URL=http://cd-server:3000 # 배포 승인 용
+      - BOT_CALLBACK_URL=http://discord-bot:3000 # 콜백용
     networks:
       - mgmt-net
 
