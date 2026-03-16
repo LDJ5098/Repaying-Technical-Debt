@@ -1,14 +1,39 @@
 services:
-  c-client:
+  c-client-1:
+    hostname: ${TAG}-device-01
+    container_name: ${TAG}-C-client-01
     environment:
       - MQTT_PORT=${MQTT_TLS_EXT_PORT}
-    container_name: ${TAG}-C-client
     build: .
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - /d/작업/프로그램 개발/IoT-Security-Architecture-Configure/infra/infra-c-client-device:/app
-    tty: true 
+      - ../${TAG}-PKI/device/device-01-certs:/certs
+    tty: true
     stdin_open: true
 
-# CI/CD test 26.03.14 0532
+  c-client-2:
+    hostname: ${TAG}-device-02
+    container_name: ${TAG}-C-client-02
+    environment:
+      - MQTT_PORT=${MQTT_TLS_EXT_PORT}
+    build: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../${TAG}-PKI/device/device-02-certs:/certs
+    tty: true
+    stdin_open: true
+
+  c-client-3:
+    hostname: ${TAG}-device-03
+    container_name: ${TAG}-C-client-03
+    environment:
+      - MQTT_PORT=${MQTT_TLS_EXT_PORT}
+    build: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../${TAG}-PKI/device/device-03-certs:/certs
+    tty: true
+    stdin_open: true

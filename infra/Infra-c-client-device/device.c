@@ -21,21 +21,25 @@ int main() {
     MQTTClient client;
     char mqtt_uri[128];
     char hostname[100];
+    char topic_pub[128];
+    char topic_sub[128];
     gethostname(hostname, 100);
 
     sprintf(mqtt_uri, "ssl://host.docker.internal:%d", MQTT_PORT);
+    sprintf(topic_pub, "device/%s/data",     hostname);
+    sprintf(topic_sub, "device/%s/response", hostname);
+
     printf("[*] 디바이스 ID: %s\n", hostname);
 
-    //MQTTClient_create(&client, "tcp://host.docker.internal:5098", hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); //평문 (테스트완료)
-    MQTTClient_create(&client, mqtt_uri, hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL); // mTLS 연결
+    MQTTClient_create(&client, mqtt_uri, hostname, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     MQTTClient_connectOptions opts = MQTTClient_connectOptions_initializer;
 
     // mTLS 옵션
     printf("[*] CA 인증서 로드 중: /certs/ca.crt\n");
     MQTTClient_SSLOptions ssl_opts = MQTTClient_SSLOptions_initializer;
     ssl_opts.trustStore = "/certs/ca.crt";
-    ssl_opts.keyStore = "/certs/client.crt";    // 클라이언트 인증서 추가
-    ssl_opts.privateKey = "/certs/client.key";  // 클라이언트 개인키 추가
+    ssl_opts.keyStore   = "/certs/client.crt";
+    ssl_opts.privateKey = "/certs/client.key";
     ssl_opts.verify = 1;
     opts.ssl = &ssl_opts;
     printf("[*] TLS 옵션 설정 완료\n");
@@ -62,8 +66,8 @@ int main() {
     printf("[+] 브로커 연결 성공! (%d번째 시도)\n", attempt);
 
     // 응답 토픽 구독
-    MQTTClient_subscribe(client, "device/response", 0);
-    printf("[+] 토픽 구독 완료: device/response\n");
+    MQTTClient_subscribe(client, topic_sub, 0);
+    printf("[+] 토픽 구독 완료: %s\n", topic_sub);
 
     while(1) {
         char input[20];
@@ -75,13 +79,13 @@ int main() {
         if (strcmp(input, "push") == 0) {
             char msg[100];
             int code = 10000 + (rand() % 90000);
-            sprintf(msg, "ID:%s / CODE:%d", hostname, code);
+            sprintf(msg, "CODE:%d", code);
 
             MQTTClient_message pubmsg = MQTTClient_message_initializer;
             pubmsg.payload = msg;
             pubmsg.payloadlen = (int)strlen(msg);
 
-            MQTTClient_publishMessage(client, "device/data", &pubmsg, NULL);
+            MQTTClient_publishMessage(client, topic_pub, &pubmsg, NULL);
             printf("[%s] 보냄: %d\n", hostname, code);
 
             // 응답 대기 (최대 5초)

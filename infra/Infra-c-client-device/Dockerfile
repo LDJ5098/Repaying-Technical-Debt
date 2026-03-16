@@ -5,12 +5,6 @@ FROM alpine:latest
 RUN apk update && \
     apk add --no-cache build-base paho-mqtt-c-dev
 
-# CA 인증서 복사
-COPY ./certs/ca.crt /certs/ca.crt
-# 클라이언트 인증서 복사 추가 (mTLS)
-COPY ./certs/client.crt /certs/client.crt
-COPY ./certs/client.key /certs/client.key
-
 # 3. 작업 폴더 설정
 WORKDIR /app
 

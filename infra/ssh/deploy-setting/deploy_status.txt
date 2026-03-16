@@ -1,6 +1,6 @@
 SSH_ACCESS: false
-TIME_LOCK: true
-WAIT_TIME: 60
+TIME_LOCK: false
+WAIT_TIME: 0
 
 QUEUE_Dev=
 
