@@ -3,8 +3,10 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const mqtthost = process.env.MQTT_HOST;
 const mqttPort = process.env.MQTT_INT_PORT;
-const client = mqtt.connect(`mqtt://mqtt-broker:${mqttPort}`);
+
+const client = mqtt.connect(`mqtt://${mqtthost}:${mqttPort}`);
 
 client.on('connect', () => {
   console.log('MQTT 브로커 연결 성공');
