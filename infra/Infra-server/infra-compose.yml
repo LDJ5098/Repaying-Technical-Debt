@@ -7,7 +7,7 @@ services:
       # - "${MQTT_EXT_PORT}:${MQTT_INT_PORT}"        # 평문 포트 (테스트 완료, 외부 접근 차단)
       - "${MQTT_TLS_EXT_PORT}:${MQTT_TLS_INT_PORT}"  # TLS 포트
     volumes:
-      - /d/작업/프로그램 개발/Repaying-Technical-Debt/infra-server/mosquitto/log:/mosquitto/log
+      - /d/작업/프로그램 개발/Repaying-Technical-Debt/infra/infra-server/mosquitto/log:/mosquitto/log
       - /d/작업/프로그램 개발/Repaying-Technical-Debt/infra/${TAG}-PKI/server/certs:/mosquitto/certs:ro 
       - /d/작업/프로그램 개발/Repaying-Technical-Debt/infra/infra-server/mosquitto/acl.conf:/mosquitto/acl.conf:ro
       #- ./mosquitto/log:/mosquitto/log
