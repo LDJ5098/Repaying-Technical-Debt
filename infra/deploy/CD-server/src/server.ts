@@ -262,7 +262,10 @@ class DeployQueue {
         const auth = Buffer.from(`ldj5098:${GITHUB_TOKEN}`).toString('base64');
         const cfg  = JSON.stringify({ auths: { 'ghcr.io': { auth } } });
         await runCommand(`mkdir -p /root/.docker && echo '${cfg}' > /root/.docker/config.json`);
-        await runCommand(`sh /app/src/scripts/deploy-Backend.sh sha-${imageTag}`);
+        
+        //배포 시간 측정
+        const output = await runCommand(`sh /app/src/scripts/deploy-Backend.sh sha-${imageTag}`);
+        console.log(output);
       } else {
         await runCommand('sh /app/src/scripts/deploy-Dev.sh');
       }

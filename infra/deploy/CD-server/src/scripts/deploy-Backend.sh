@@ -7,7 +7,10 @@ COMPOSE_FILE="/infra-server/infra-compose.yml"
 BACKEND_DIR="/infra-server/backend/"
 
 echo ">> 배포 시작 (Tag: ${IMAGE_TAG})"
+PULL_START=$(date +%s)
 docker pull ${IMAGE}:${IMAGE_TAG}
+PULL_END=$(date +%s)
+echo ">> pull 시간: $((PULL_END - PULL_START))초"
 
 #배포
 export BACKEND_IMAGE_TAG="${IMAGE_TAG}"
