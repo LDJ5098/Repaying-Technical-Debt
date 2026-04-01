@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-IMAGE="ghcr.io/$GITHUB_REPO/backend"
+IMAGE="ghcr.io/$(echo $GITHUB_REPO | tr '[:upper:]' '[:lower:]')/backend"
 IMAGE_TAG="${1:-latest}"
 COMPOSE_FILE="/infra-server/infra-compose.yml"
 BACKEND_DIR="/infra-server/backend/"

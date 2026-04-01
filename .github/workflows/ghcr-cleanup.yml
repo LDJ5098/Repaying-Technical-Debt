@@ -15,7 +15,7 @@ jobs:
       - name: 오래된 backend 이미지 정리 (최근 5개 유지)
         uses: actions/delete-package-versions@v5
         with:
-          package-name: iot-security-architecture-configure/backend
+          package-name: repaying-technical-debt/backend
           package-type: container
           min-versions-to-keep: 5
           delete-only-untagged-versions: false
