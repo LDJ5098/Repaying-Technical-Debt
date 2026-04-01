@@ -45,7 +45,7 @@ services:
 
   # 3. 백엔드 서버
   backend:
-    image: ghcr.io/ldj5098/iot-security-architecture-configure/backend:${BACKEND_IMAGE_TAG:-latest}
+    image: ghcr.io/ldj5098/Repaying-Technical-Debt/backend:${BACKEND_IMAGE_TAG:-latest}
     container_name: ${TAG}-backend
 #    volumes:
 #      - ./backend:/app

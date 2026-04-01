@@ -10,7 +10,7 @@ INFRA_SERVER_DIR="/infra-server"
 INFRA_CLIENT_DIR="/infra-c-client-device"
 COMPOSE_FILE="/infra-server/infra-compose.yml"
 # 호스트 경로(Dev-c-client-device/docker-compose.yml 전용)
-HOST_INFRA_CLIENT_DIR="${HOST_INFRA_CLIENT_DIR:-/d/작업/프로그램 개발/IoT-Security-Architecture-Configure/infra/infra-c-client-device}"
+HOST_INFRA_CLIENT_DIR="${HOST_INFRA_CLIENT_DIR:-/d/작업/프로그램 개발/Repaying-Technical-Debt/infra/infra-c-client-device}"
 
 RAW_BASE="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 
