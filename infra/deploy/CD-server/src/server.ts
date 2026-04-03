@@ -8,7 +8,7 @@ app.use(express.json());
 
 const GITHUB_TOKEN  = process.env.GITHUB_TOKEN!;
 const GITHUB_REPO   = process.env.GITHUB_REPO!;
-const DEPLOY_BRANCH = 'main';
+//const DEPLOY_BRANCH = 'main';
 const IMAGE_BASE    = `ghcr.io/${GITHUB_REPO.toLowerCase()}/backend`;
 const STATUS_FILE   = '/deploy-setting/deploy_status.txt';
 
@@ -23,7 +23,7 @@ interface DeploySettings {
 
 const readSettings = (): DeploySettings => {
   const txt = readFileSync(STATUS_FILE, 'utf-8');
-  const get = (key: string) => txt.match(new RegExp(`${key}:\\s*(\\S+)`))?.[1].trim() ?? '';
+  const get = (key: string) => txt.match(new RegExp(`${key}:[ \\t]*([^\\n\\r]*)`))?.[1].trim() ?? '';
   return {
     sshAccess:       get('SSH_ACCESS') === 'true',
     timeLock:        get('TIME_LOCK')  === 'true',
@@ -446,6 +446,8 @@ watchFile(STATUS_FILE, { interval: 1000 }, () => {
     const next = readSettings();
     settings = next;
     console.log('>> 설정 변경 감지:', next);
+    console.log('>> prev.rollbackBackend:', JSON.stringify(prev.rollbackBackend));
+    console.log('>> next.rollbackBackend:', JSON.stringify(next.rollbackBackend));
 
     backendQueue.syncFromFile(readQueueIndices('backend'));
     devQueue.syncFromFile(readQueueIndices('dev'));
@@ -455,7 +457,7 @@ watchFile(STATUS_FILE, { interval: 1000 }, () => {
 
     // A 관리자 롤백 감지 : ROLLBACK_Backend에 순수 RunID가 입력된 경우만 트리거
     // '[' 문자가 없는 경우만 = 완료/실패 결과 갱신으로 인한 재트리거 방지
-    if (!prev.rollbackBackend && next.rollbackBackend && !next.rollbackBackend.includes('[')) {
+    if (next.rollbackBackend && !next.rollbackBackend.includes('[') && prev.rollbackBackend !== next.rollbackBackend) {
       console.log(`>> 롤백 감지 (runId: ${next.rollbackBackend})`);
       handleRollback(next.rollbackBackend);
     }
